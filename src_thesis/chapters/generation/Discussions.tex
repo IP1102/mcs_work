@@ -1,0 +1,9 @@
+While statistical metrics provide valuable insights, they may not fully capture a model's ability to generate high-quality code. 
+We can observe the phenomenon in Table \ref{tab:all_metrics} and Table \ref{tab:exresults}.
+The evaluation metrics used in Table \ref{tab:all_metrics} do not show very drastic difference in the RQ1 and RQ3 results.
+However, the qualitative results presented in Table \ref{tab:exresults} present very different narrative.
+We observe that the models trained using both supervised fine-tuning and \rl{} techniques show significantly better results. Specifically, the number of test cases passed by the best model in RQ3 is 61\% more than that of the best model in RQ1.
+This observation highlights the importance of qualitative evaluation in addition to traditional metrics-based evaluation.
+
+
+One may wonder whether production-ready \llmsc{} for code, such as GitHub Copilot, can achieve better performance in automated extract method refactoring. Although this is beyond the scope of our study, it's reasonable to assume that such models could handle smaller, frequently performed refactorings. However, anecdotal evidence suggests these models may struggle with context-specific, complex, non-atomic refactorings. Further research is needed to examine the behavior of these models across various prompt settings and complexity levels.

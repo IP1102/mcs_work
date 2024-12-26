@@ -1,0 +1,28 @@
+\noindent
+\textbf{Construct validity:} 
+Construct validity measures the degree to which tools and metrics actually measure the properties that they are supposed to measure. 
+It concerns the appropriateness of observations and inferences based on measurements taken during the study.
+The quality of positive and negative samples extracted from RefactoringMiner and PyDriller poses a threat to validity.
+Though RefactoringMiner and PyDriller are state-of-the-art tools that are widely used and considered accurate,
+to mitigate the threat,
+we randomly picked up a subset of the identified negative samples and manually evaluated the quality of the samples.
+
+
+Our approach uses a significantly smaller dataset (approximately $5\%$) compared to the dataset used in the state-of-the-art approach.
+Though the chosen repositories are representative,
+it can be considered a threat to validity.
+We chose the smaller dataset
+because of the computing resources required for the full-size dataset. 
+Additionally, in this study, we aimed to explore the feasibility and effectiveness of the proposed approach.
+In the future, we aim to repeat the experiment with a larger dataset.
+
+\noindent
+\textbf{External validity:}
+External validity concerns the generalizability and repeatability of the produced results.
+One of the threats to validity in this thesis is that the approach proposed is exclusive to \exm{} refactoring. 
+Using our approach for another kind of refactoring is challenging and requires extensive reworking of the approach used. 
+For example, \emph{move method} refactoring moves a method to an appropriate class~\cite{Fowler1999Refactoring}. 
+We cannot apply the same approach that we adopted to create \exm{} dataset for \emph{move method} refactoring
+because we will not have the code to collect in the refactored commit since the method would have moved to another class. 
+A similar challenge is expected when considering other refactoring types, such as \emph{pull up method} and \emph{push down method}.
+In the future, we would like to address this challenge and propose an effective and generic dataset-creation approach for different refactoring types.

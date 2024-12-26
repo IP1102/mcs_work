@@ -1,0 +1,145 @@
+\epigraph{Any fool can write code that a computer can understand. Good programmers write code that humans can understand.}{--- \textup{Martin Fowler}}
+
+
+
+This opening chapter frames our research presented in this thesis, by establishing its context, identifying the key challenges in software refactoring, describing our proposed methodology, and highlighting the main contributions of this work.
+
+\section{Code quality}
+
+Software quality is about more than just ticking boxes on a requirements list. While we can measure it by how well the code matches technical specifications, the real test is whether it actually helps people do what they need to do. At its core, quality software should both work as designed and make users' lives easier ~\cite{spinellis2006code}. Poor quality choices tend to have lasting consequences, often creating technical debt that impacts projects long after release~\cite{seaman2011measuring}. 
+
+In software engineering, quality encompasses two fundamental dimensions: functional and structural~\cite{balci1998verification}. Functional quality measures how effectively software meets its specified design requirements and fulfills its intended purpose, essentially determining if we built the right software. Structural quality, on the other hand, focuses on the non-functional attributes such as maintainability, reliability, and robustness, determining if we built the software right~\cite{madler2021applying}. Together, these dimensions ensure that software not only provides the right features but also performs efficiently and remains sustainable throughout its lifecycle.
+
+Maintainability encompasses key attributes such as modularity, understandability, and testability that determine how easily software can be modified and managed. Studies have shown that poor maintainability practices lead to $40$-$70$\% of the total software lifecycle costs~\cite{seacord2003modernizing}. 
+% Rather than manifesting as major code issues, poor maintainability typically stems from numerous small deviations from best practices, leading to what is known as technical debt --- the long-term costs resulting from maintainability issues.
+
+Code maintainability problems often reveal themselves through what software practitioners call ``code smells" - patterns that signal potential design flaws~\cite{Fowler1999Refactoring}. Just as unpleasant odors can signal health hazards in our environment, code smells warn of deeper implementation~\cite{Fowler1999Refactoring}, design~\cite{suryanarayana2014refactoring} or architectural~\cite{garcia2009identifying} issues. Common examples include duplicated code blocks, overly complex methods, and tightly coupled components. While these patterns don't necessarily indicate immediate bugs, they make the codebase increasingly difficult to understand, maintain, and modify. Over time, these issues compound, leading to higher development costs and reduced team productivity, particularly when teams need to add new features or fix existing problems.
+
+\section{Problem statement}
+
+% \begin{minipage}[]{\columnwidth}
+%     \footnotesize
+%     \begin{minipage}[]{0.60\columnwidth}
+%         \paragraph{Example Code}
+%         \label{lst:branching_code}
+%         \inputminted[breaklines=True]{java}{chapters/example_codes/cs1.java}
+%         % \paragraph{X86 Assembly}
+%         % \inputminted{asm}{code/branching_other_function.s}
+%     \end{minipage}
+%     \hfill
+%     % \begin{minipage}[]{0.35\linewidth}
+%     %     \paragraph{Branchless Code}
+%     %     \label{lst:branchless_code}
+%     %     \inputminted{c++}{code/Minimax_perf.cpp}
+%     %     \vspace{1.1cm}
+%     %     \paragraph{X86 Assembly}
+%     %     \inputminted{asm}{code/branchless_other_function.s}
+%     %     \vspace{3.6cm}
+%     % \end{minipage}
+% \end{minipage}
+
+
+
+One of the code smells, the \textit{long method} smell, characterized by methods that are excessively long and complex, is particularly prevalent in Object-Oriented Programming (OOP)~\cite{fowler2018refactoring, Sharma2018}. Recent systematic reviews and empirical studies have consistently ranked the long method smell among the top five most frequently occurring and problematic code smells~\cite{agnihotri2020systematic, lacerda2020code}.
+
+The primary remedy for addressing the long method smell is \textit{Extract Method} refactoring~\cite{Fowler1999Refactoring}. This technique involves identifying cohesive blocks of statements within a long method and extracting them into a separate, well-named method.
+
+However, the current practice of \exm{} refactoring presents several challenges:
+\begin{itemize}
+    \item {Manual Identification}: Developers must first identify methods that require refactoring and then locate specific code blocks suitable for extraction, a process that becomes increasingly complex and time-consuming as codebase size grows.
+    \item {Error-Prone Implementation}: The manual extraction process can inadvertently introduce new bugs or even create new code smells, particularly when dealing with complex method dependencies and variable scoping.
+    \item {Automated Tool Support}: The existing tools and IDE plugins that assist software practitioners to perform extract method refactoring are not fully automated. The user has to specify which block of code needs needs the refactoring and then the tool simply extracts that block.
+\end{itemize}
+
+While some approaches have been proposed to address the long method smell~\cite{maruyama2001automated, tsantalis2011identification, charalampidou2016identifying}, these solutions are not fully automated and still require significant manual intervention to complete the refactoring process. The lack of a comprehensive, automated solution for both identifying and executing \exm{} refactoring opportunities represents a significant gap in modern software maintenance tools and practices.
+
+\section{Motivating example}
+To illustrate the challenges and importance of automated extract method refactoring, consider the following real-world code example from Netflix's {Eureka} project at commit {756bcd9}~\footnote{\href{https://github.com/Netflix/eureka/blob/756bcd9fd308647c7b388543da9a3a6e034ee3f5/eureka-client/src/main/java/com/netflix/discovery/DiscoveryClient.java\#L865}{Netflix Eureka DiscoveryClient.java}}, a service registry for microservices architectures:
+
+\begin{listing}[H]
+    \footnotesize
+    \centering
+    \caption{Extract Method Refactoring Candidate}
+    \label{lst:branching_code}
+    \inputminted[breaklines=true, breakafter=-, breaksymbolleft={},
+    linenos=true, bgcolor=gray!10, highlightlines={16-25}]{java}{chapters/example_codes/motex.java}
+\end{listing}
+
+This method combines status retrieval and event publishing logic with complex control flow and exception handling.
+The refactored version separates these concerns more effectively:
+
+% \begin{minipage}[]{\columnwidth}
+%     \footnotesize
+%     \begin{minipage}[]{\columnwidth}
+%         \caption {Code after Extract Method Refactoring}
+%         % \paragraph{Code after Extract Method Refactoring}
+%         \label{lst:branching_code}
+%         \inputminted[breaklines=true, breakafter=-, breaksymbolleft={},
+%         linenos=true, bgcolor=gray!10, highlightlines={6,13-22}]{java}{chapters/example_codes/motex2.java}
+%     \end{minipage}
+% \end{minipage}
+
+\begin{listing}[H]
+    \footnotesize
+    \centering
+    \caption{Code after Extract Method Refactoring}
+    \label{lst:branching_code}
+    \inputminted[breaklines=true, breakafter=-, breaksymbolleft={},
+    linenos=true, bgcolor=gray!10, highlightlines={15,19-25}]{java}{chapters/example_codes/motex2.java}
+\end{listing}
+
+The refactoring improves the code by separating concerns, simplifying error handling, and enhancing testability. However, identifying such opportunities in large codebases requires careful analysis of context, variable scope, and behavior preservation. This example demonstrates the need for an automated approach to detect and perform such refactorings consistently across large-scale systems.
+
+\section{Proposed Solution and Contribution}
+
+\subsection{Proposed solution}
+We present a novel, fully automated two-phased approach to address the challenges of extract method refactoring.
+
+\textbf{Phase 1---Refactoring Candidate Identification:}\
+We develop an innovative approach to identify potential candidates for \exm{} refactoring by generating source code embeddings and advanced machine learning classifiers. This phase focuses on identifying candidates suitable for \exm{} refactoring.
+
+\textbf{Phase 2---Automated Refactoring Generation:}\
+We implement an intelligent refactoring system using Large Language Models (\llmsc{}), enhanced through fine-tuning and Reinforcement Learning (\rl{}) optimization. This approach focuses on to generate refactored code that maintains both syntactic correctness and semantic equivalence with the original implementation.
+
+\subsection{Key contributions}
+This thesis makes the following contributions to the field of automated software refactoring:
+
+\begin{itemize}
+\item \textbf{Novel Sample Identification Framework:} We introduce a systematic mechanism for identifying and classifying positive and negative samples for \exm{} refactoring, addressing a fundamental gap in existing approaches.
+
+\item \textbf{Comprehensive Benchmark Dataset:} We develop a large-scale dataset comprising $55,430$ labeled samples (both positive and negative), establishing a robust benchmark for evaluating automated refactoring candidate identification approaches.
+
+\item \textbf{Advanced Code Representation:} We propose an Autoencoder-based approach that leverages \GCB{} for extracting latent features, enabling more effective method representation for binary classification tasks.
+
+\item \textbf{Supervised Fine-tuning Framework:} We develop and evaluate supervised fine-tuned models specifically designed for automatic \exm{} refactoring, eliminating the need for manual code block selection and addressing key limitations of existing approaches.
+
+\item \textbf{Hybrid Learning Architecture:} We present a novel hybrid approach that combines supervised fine-tuning with reinforcement learning optimization, specifically engineered for extract method refactoring. The effectiveness of this approach is validated through both quantitative metrics and qualitative analysis.
+
+\item \textbf{Open-source Tool and Dataset:} We contribute a comprehensive tool for analyzing Java repositories on GitHub to generate extract method refactoring datasets with detailed metadata. Both the tool and the resulting dataset are made publicly available in Appendix~\ref{appendix} to facilitate replication studies and future research extensions.
+
+\end{itemize}
+
+\section{Related Publication}
+
+Parts of this research work has been either accepted at or submitted to the following conferences.
+
+\begin{itemize}
+    \item Palit, Indranil, Gautam Shetty, Hera Arif, and Tushar Sharma.``Automatic refactoring candidate identification leveraging effective code representation." In 2023 IEEE International Conference on Software Maintenance and Evolution (ICSME), pp. 369-374. IEEE, 2023.
+    
+    \item Palit, Indranil and Tushar Sharma.``Reinforcement Learning vs Supervised Learning: A tug of war to generate refactored code accurately" Proceedings of the ACM on Software Engineering 1, no. FSE (2025) (\textit{submitted})
+\end{itemize}
+
+\vspace{\fill}
+\section{Outline of the Thesis}
+
+This thesis presents an end-to-end solution for automating \exm{} refactoring through two interconnected studies, organized into five chapters:
+
+\begin{itemize}
+    \item \textbf{Chapter 2} Introduces fundamental concepts in software refactoring, code embeddings, transformer architectures, and reinforcement learning that form the foundation for our technical approaches.
+
+    \item \textbf{Chapter 3} Presents our first contribution: an innovative approach using code embeddings and machine learning to automatically identify potential \exm{} refactoring candidates.
+
+    \item \textbf{Chapter 4} Describes our second contribution: a novel reinforcement learning-based framework that automatically transforms identified candidates into properly refactored methods.
+
+    \item \textbf{Chapter 5} Synthesizes our findings and outlines promising directions for future research in automated code refactoring.
+\end{itemize}

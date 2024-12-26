@@ -1,0 +1,226 @@
+
+\epigraph{Research is to see what everybody else has seen, and think what nobody has thought.}{--- \textup{Dr. Albert Szent-Gyorgyi}}
+
+This chapter has two main sections. The first section provides the background concepts needed to understand our research. The second section reviews existing research in this field, examining prior work that shapes the basis of our study.
+
+\section{Context}
+
+\subsection{Extract method refactoring}
+Extract Method refactoring, first formalized by Fowler \cite{Fowler1999Refactoring}, is a fundamental technique for improving code maintainability by decomposing large methods into smaller, more focused units. This transformation involves identifying cohesive code fragments and extracting them into new methods while preserving program behavior \cite{murphy2011we}. Recent studies by Silva~\etal{} \cite{silva2016we} and Tsantalis~\etal{} \cite{Tsantalis2018Accurate} have shown that Extract Method is among the most frequently applied refactorings in practice, accounting for approximately 15-25\% of all refactoring operations in large-scale systems.
+
+The primary motivation for Extract Method refactoring is to address the``Long Method" code smell, where methods become long, complex or incohesive, violating the single responsibility principle \cite{martin2009clean}. The process involves identifying a coherent fragment of code, extracting it into a new method with an appropriate name, and replacing the original fragment with a call to the newly created method. This transformation must preserve program semantics while managing variable scope, parameter passing, and return values \cite{kim2012field}. Studies by Murphy-Hill et al. \cite{murphy2011we} have shown that while developers frequently perform this refactoring manually, automated tool support remains challenging due to the complexity of ensuring behavioral preservation and identifying optimal extraction points.
+
+\subsection{Embeddings}
+
+Code embeddings are dense vector representations that capture semantic properties of source code in a continuous space. Alon~\etal{} \cite{Alon2019Code2vec} introduced Code2Vec, demonstrating how path-based attention over abstract syntax trees can create meaningful code representations. This was further advanced by Feng~\etal{}. \cite{feng2020codebert} with CodeBERT, which combines both structural and textual features of code. These embedding techniques have revolutionized code analysis by enabling deep learning models to better understand and process source code semantics.
+
+Recent advancements in code embeddings have focused on incorporating multiple views of code, such as data flow, control flow, and natural language documentation. Guo et al. \cite{guo2022unixcoder} demonstrated that unified representations combining these different aspects significantly improve performance on some downstream tasks. The effectiveness of these embeddings has been particularly evident in tasks such as code similarity detection, bug localization, and automated program repair \cite{zhou2019devign}. Furthermore, studies by Kanade~\etal{} \cite{kanade2020learning} have shown that pre-training on large code corpora can create embeddings that capture rich semantic relationships between different programming concepts and patterns.
+
+\subsection{Transformers}
+
+The Transformer architecture, introduced by Vaswani~\etal{} \cite{vaswani2017attention}, revolutionized sequence processing through its self-attention mechanism. In the context of code processing, Ahmad~\etal{} \cite{ahmad2021} demonstrated how Transformers can effectively capture long-range dependencies in source code, while Hellendoorn~\etal{} \cite{hellendoorn2019global} showed their effectiveness in modeling code structure through global attention patterns. The architecture's ability to process sequences in parallel while maintaining contextual relationships has made it particularly suitable for code analysis tasks.
+
+The key innovation of Transformers lies in their self-attention mechanism, which allows the model to weigh the importance of different parts of the input sequence dynamically. For code processing, this is particularly valuable as it enables the model to capture relationships between distant parts of the code, such as variable declarations and their uses, or function calls and their definitions \cite{wang2019self}. Recent adaptations of the Transformer architecture for code, such as CodeT5 \cite{wang2021codet5identifierawareunifiedpretrained}, have introduced specialized attention patterns that better align with code structure, including syntax-aware attention and hierarchical representations that respect code's abstract syntax tree structure.
+
+% \subsection{Large Language Models}
+
+\subsection{Supervised fine-funing of large language models}
+
+
+Supervised fine-tuning is an add-on training for adapting pre-trained large language models (LLMs), such as CodeT5~\cite{wang2021codet5identifierawareunifiedpretrained}, to specialized tasks. 
+This adaptation is achieved by training the models on domain-specific datasets, which is particularly important for enhancing their performance in tasks such as extract method refactoring. In this context, we focus on two predominant model architectures: \textit{encoder-decoder} and \textit{decoder-only} models.
+
+Encoder-decoder models consist of two main components. 
+The encoder processes the input sequence (\ie{} source code, in our case) to create a context-rich representation, which the decoder then uses to generate the output sequence (refactored code with extracted method, in our case).
+This architecture is particularly useful when the input is a code snippet, and the output is the corresponding refactored version. 
+The fine-tuning objective for encoder-decoder models aims to maximize the conditional probability of the correct output sequence given an input sequence. 
+% During training, inputs are fed into the encoder, and their corresponding target outputs into the decoder. 
+A technique called teacher forcing is employed, where the correct output token from the previous time step is fed as input to the next step. 
+% \todo{rewrite this using autoregressive characteristic - I am not sure if enc-dec models have autoregressive characteristics. Do you mean the autoregressive characteristics of the decoder?}
+
+Decoder-only models, such as those used in GPT-like architectures~\cite{radford2019language}, operate differently. They generate each token of the output sequence directly, conditioned on all previous tokens and the input sequence, without a separate encoding phase. The training process involves presenting the combined sequence of the input code and the refactored code to the model, typically separated by a special token, \eg{} ~\textsc{[sep]}.
+
+For both architectures, the loss function commonly used is the cross-entropy loss, calculated over the output sequence tokens. This loss function helps the model learn to predict the correct tokens in the output sequence. 
+
+
+\subsection{Reinforcement learning for sequence generation}
+
+Reinforcement Learning (\rl{}) is a branch of machine learning focused on 
+% teaching algorithms to make a series of decisions~\cite{shakya2023reinforcement}.
+training agents to take actions in an environment to maximize some notion of cumulative reward often involving a series of decisions~\cite{shakya2023reinforcement}. 
+It uses a model known as the Markov Decision Process (MDP)~\cite{puterman2014markov}, which deals with decision-making where each action is determined by steps, and outcomes are influenced by randomness. 
+In \rl{}, an agent (\ie{} an autonomous entity that takes action in the given environment)
+improves its decisions through trial-and-error interactions with its environment, learning from the rewards it receives based on its actions. The agent's decision-making strategy is known as the \textit{policy}, which determines the next action to take given the current situation or \textit{state}. The \textit{state} represents the current context or input on which the agent bases its decisions.
+
+
+In the context of language models, \rl{} can be employed as a training mechanism. 
+Here, the language model serves as the \textit{policy}, and the current text sequence is the \textit{state}. 
+The model generates an action,
+the next word or token,
+altering the state into a new text sequence. 
+The quality of the completed text sequence determines the reward, assessed either by human judgment or a trained reward model based on human preferences.
+
+Formally, MDP can be defined as follows.
+
+\textbf{State Space: }
+The state space \(S\) is the set of all possible language representations up to a maximum length \(L\):
+\begin{equation}
+    S = \{s \mid s \in \mathbb{R}^d \times l, l \leq L\}
+\end{equation}
+where \(d\) is the dimensionality of the token embeddings and \(l\) is the current sequence length.
+
+% \subsubsection{Markov Decision Process Definition}
+\textbf{Action Space: }
+The action of the model (actor) is to generate the next token based on the previously generated tokens and the input data. The action space is the vocabulary of the language model, representing all possible tokens:
+\begin{equation}
+    A = \{1, 2, \ldots, V\}
+\end{equation}
+where \(V\) is the vocabulary size.
+
+\textbf{State Transition Function: } 
+The state transition function \(P\) describes how the environment moves from one state to another given an action. In our sequence generation task, this transition is deterministic:
+\begin{equation} \label{eq:state_trans_func}
+    P(s_{t+1} \mid s_t, a_t) = 
+    \begin{cases} 
+    1 & \text{if } s_{t+1} = [s_t; e(a_t)], \\
+    0 & \text{otherwise}
+    \end{cases}
+\end{equation}
+where \(e(a_t)\) is the embedding of the chosen token.
+
+\textbf{Policy: }
+The policy is represented by a language model that produces a probability distribution over the next token given the current state:
+\begin{equation}
+    \pi_\theta(a \mid s) = \text{LM}_\theta(a \mid s)
+\end{equation}
+where \(\text{LM}_\theta\) is the language model with parameters \(\theta\).
+
+\textbf{Value Function: }
+The value function estimates the expected cumulative reward from a given state under a particular policy:
+\begin{equation}
+    V_\phi(s) = \mathbb{E}_{\pi_\theta}\left[\sum_{t=0}^{\infty} \gamma^t R_t \mid S_0 = s\right]
+\end{equation}
+where \(\phi\) are the parameters of the value head and \(\gamma\) is the discount factor.
+
+\subsubsection{Reward}
+In sequence modeling, the reward quantifies the quality or desirability of generated sequences. It measures how well the generated sequence aligns with desired characteristics, such as fluency, coherence, or task-specific objectives.
+
+\subsubsection*{Reward Function}
+The reward function \(R\) can be expressed as:
+\begin{equation}
+    R(s, a) = \lambda_1 r_{\text{task}}(s, a) + \lambda_2 r_{\text{seq}}(s, a)
+\end{equation}
+where $r_{\text{task}}$ represents task-specific evaluation metrics, $r_{\text{seq}}$ captures sequence quality measures, and $\lambda_1$, $\lambda_2$ are weighting coefficients balancing different reward components..
+
+
+In the software engineering domain, \rl{} has been used for code completion tasks~\cite{shojaee2023execution, li2024ircoco} and code summarization~\cite{wan2018improving}. They all use actor-critic methods to train the language models for specific downstream tasks. The actor is the policy model, the main language model pre-trained or fine-tuned on code data and the critic is another component that evaluates the output generated by the actor and provides a reward signal. Based on this architecture, we formulate our problem as follows. 
+
+
+\subsection{Solution framework}
+
+In this second part of this thesis, we focus on aligning a fine-tuned large language model for extract method refactoring generation using Proximal Policy Optimization (\ppo{})~\cite{schulman2017proximal}---a popular actor-critic  reinforcement learning method. 
+This alignment process involves several key components: the actor, the critic, rewards, the value function, and KL divergence.
+
+The \textit{actor} in our setting is the language model itself, which generates sequences of code such as extracting methods from code snippets. It takes the current code as input and outputs a refactored version with extracted methods. The \textit{critic} is a separate component that evaluates the quality of the refactoring produced by the actor, providing a score or reward that reflects how well the generated refactoring meets the desired criteria, such as syntactically and semantically accurate refactored code.
+
+A \textit{reward} is a numerical score assigned to each generated refactoring, indicating its quality. Higher rewards are given for refactorings that improve code properties, while lower rewards indicate poor refactoring outcomes, such as introduction of errors. These rewards guide the actor in learning to generate more desirable refactorings over time.
+
+The \textit{value function} estimates the expected reward from a given state or step in the sequence generation process. It predicts how good the current refactoring is, considering future rewards. In practice, the value function is represented by a separate neural network head, called a \textit{value head}, which outputs a scalar value for each input state, estimating the expected cumulative reward, denoted as 
+\begin{equation} \label{eq:value_func}
+ V(s) = \mathbb{E} \left[ R \mid s \right], where\ R\ is the\ total\ reward
+\end{equation}
+
+\textit{Proximal Policy Optimization (\ppo{})} is the algorithm used to train the actor model. \ppo{} optimizes the model's parameters by adjusting its behavior in small, controlled steps, ensuring that changes are not too drastic. This balance between exploration (trying new refactoring strategies) and stability (maintaining effective behaviors) helps the model learn efficiently without losing its learned knowledge.
+
+The \textit{objective function} in PPO aims to maximize the expected reward while ensuring that updates to the policy (the actor's behavior) are not excessively large. The PPO objective can be formulated as:
+
+\[
+L^{\text{PPO}}(\theta) = \mathbb{E} \left[ \min \left( r_t(\theta) \hat{A}_t, \, \text{clip}(r_t(\theta), 1 - \epsilon, 1 + \epsilon) \hat{A}_t \right) \right],
+\]
+
+where \( \theta \) represents the model parameters, \( r_t(\theta) = \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)} \) is the ratio of the new policy to the old policy, \( \hat{A}_t \) is the advantage estimate, and \( \epsilon \) is a small constant controlling the clipping range.
+
+%  
+
+The \textit{PPO loss} combines the clipped objective function with the value function loss and an entropy bonus. The complete loss function can be expressed as:
+
+\[
+L(\theta) = L^{\text{PPO}}(\theta) - c_1 \cdot \text{Value Loss}(\theta) + c_2 \cdot \text{Entropy Bonus}(\theta),
+\]
+
+where the \textit{Value Loss} measures the accuracy of the critic's value estimates, and the \textit{Entropy Bonus} encourages exploration by preventing the actor from becoming overly deterministic.
+
+\textit{KL Divergence} (Kullback-Leibler divergence) measures the difference between the old policy $\pi_{\theta_{old}}$ and the updated policy $\pi_\theta$, ensuring that updates to the policy do not deviate excessively from the original behavior. It is calculated as:
+
+\begin{equation} \label{eq:kl_div}
+\text{KL}(\pi_{\theta_{old}} \parallel \pi_{\theta}) = \sum_{x} \pi_{\theta_{old}}(x) \log \left( \frac{\pi_{\theta_{old}}(x)}{\pi_{\theta}(x)} \right),
+\end{equation}
+
+where $\pi_{\theta_{old}}(x)$, $\pi_\theta(x)$ represent the probability distributions over the possible code refactoring actions that the model can take at a given step.
+
+In summary, the actor generates refactoring suggestions, and the critic evaluates them using static non differential rewards that provide feedback on their quality. \ppo{} optimizes the model's behavior gradually, guided by the value function, the objective function, and loss components, 
+% \doubt{I haven't included the objective and loss components because it was very difficult to explain without complex math equations. Should I do it or remove it since it might be understood from just PPO? \\
+% If they are short equation, you can. Otherwise, mention them using words.}, 
+while KL divergence ensures that changes remain within reasonable limits. This framework enables the fine-tuning of the language models to produce high-quality code refactorings over time.
+
+
+\section{Related Work}
+
+\subsection{Refactoring candidate identification using traditional techniques}
+
+Software developers can manually decide \textit{what} to refactor according to their intuition and past experiences~\cite{Al2015Identifying}.
+Often, they use automated tools to calculate code quality metrics and code smells to identify refactoring candidates~\cite{Mens2004Survey, Al2015Identifying}. 
+Another method to identify refactoring candidates is to define a set of preconditions or compliance rules. If a code did not follow these rules, it was considered a candidate for refactoring. Studies by Bois \etal{}~\cite{Du2004Refactoring} and Kataoka \etal{}~\cite{Kataoka2001Automated} used such compliance rules.
+
+Another technique considers creating clustering algorithms to identify if code needs refactoring. 
+Czibula \etal{}~\cite{Czibula2008Hierarchical} and Serban \etal{}~\cite{Serban2007Restructuring}, 
+created clusters based on the distance between methods and attributes within and outside of classes to identify numerous refactoring candidates.
+Similarly, Bavota \etal{}~\cite{Bavota2011Identifying} suggest a graph-based approach that uses weighted graphs instead of abstract syntax trees to identify methods that can be extracted. 
+Finally, Tsantalis \etal{}~\cite{Tsantalis2009Identification} used code slices to identify \exm{} candidates.
+
+\subsection{Detecting refactoring with Machine Learning techniques}
+
+Many studies have explored ways to identify refactoring candidates automatically using machine learning.
+% The most well-known techniques in automatically predicting refactoring using machine learning 
+Typically, such studies use
+source code metrics or commit messages to train a model. For example, Aniche \etal{}~\cite{Aniche2020Effectiveness} predict $20$ kinds of refactorings at the method, class, or variable level. 
+They use a large number of code, process, and ownership metrics to train six supervised machine learning algorithms. 
+The study reports that \rf{} model performs the best among the compared models.
+Gerling~\cite{Gerling2020Machine} conducted an empirical study as an extension of Aniche \etal{}'s study. 
+They focused on improving the data collection process in Aniche \etal{}'s study to create a high quality large-scale refactoring dataset. 
+
+
+Similarly, Van Der Leij \etal{}~\cite{VanDerLeij2021Data} analyze five machine learning models to predict \exm{} refactoring and compare the results with industry experts.
+They collect $61$ code metrics and analyze \rf{}, \dt{}, \logr{}, Linear \SVM{}, and Gaussian \nb{} algorithms. 
+They found \rf{} as the best performing model. 
+Kumar \etal{}~\cite{Kumar2019Method} perform a study to predict method-level refactoring and analyze $10$ machine learning classifiers. 
+% They collect $25$ code quality metrics as features for their machine learning model. 
+
+Sagar \etal{}~\cite{Sagar2021Comparing} considers the problem of refactoring candidate prediction as a multi-class classification problem. 
+Their study uses source code quality metrics and commit messages as features to predict six method-level refactorings. 
+They compare two machine learning models: a text-based model that analyses keywords from commit messages and a source code-based model that analyses $64$ code quality metrics. 
+Kurbatova \etal{}~\cite{Kurbatova2020Recommendation} use code embeddings generated from Code2Vec~\cite{Alon2019Code2vec} to train their machine learning model to predict the \mm{} refactoring. 
+
+
+
+% \todo{Add a section on usage of RL in SE - DONE}
+
+\subsection{Automated Refactoring}
+
+Many studies have explored automated refactoring candidate identification using machine learning techniques. Typically, these studies use source code metrics or commit messages to train models. Aniche \etal{}~\cite{Aniche2020Effectiveness} predict $20$ kinds of refactorings at method, class, or variable levels using code, process, and ownership metrics, with Random Forest performing best among six algorithms. Gerling~\cite{Gerling2020Machine} extended this work by improving the data collection process to create a high-quality, large-scale refactoring dataset. Van Der Leij \etal{}~\cite{van2021data} analyze five machine learning models to predict Extract Method refactoring, comparing results with industry experts. Using $61$ code metrics, they also found Random Forest to be the best performing model. Kumar \etal{}~\cite{Kumar2019Method} studied method-level refactoring prediction, analyzing 10 machine learning classifiers. Sagar \etal{}~\cite{Sagar2021Comparing} approaches refactoring candidate prediction as a multi-class classification problem, using both source code quality metrics and commit messages as features to predict six method-level refactorings. They compare text-based and source code-based models. Kurbatova \etal{}~\cite{Kurbatova2020Recommendation} employ code embeddings generated from Code2Vec~\cite{Alon2019Code2vec} to train their model for Move Method refactoring prediction.
+
+In the domain of automated code refactoring, researchers have developed a variety of specialized tools and approaches. CeDAR~\cite{tairas2012cedar}, an Eclipse plugin, focuses on identifying and eliminating duplicate code. JDeodorant~\cite{JDeodrant, mazinanian2016jdeodorant} detects code smells and proposes refactoring strategies. Fokaefs~\etal{}\cite{fokaefs2012identification} extended JDeodorant's capabilities to prioritize and implement class extraction refactorings. SOMOMOTO\cite{zanetti2014automated} facilitates move method refactoring and code modularization. While these rule-based methods have made significant contributions, they face limitations in capturing semantic information during refactoring. Moreover, they often require manual intervention from developers to identify and select code blocks for refactoring. To address these challenges, recent research has explored the application of deep learning and large language models (LLMs) for automated code refactoring.
+
+Szalontai~\etal{}~\cite{szalontai2023deep} developed a deep learning method for refactoring source code, initially designed for the Erlang programming language. Their approach comprises a localizer and a refactoring component, enabling the identification and transformation of non-idiomatic code patterns into idiomatic counterparts. Tufano~\etal{}~\cite{tufano2019learning} conducted a quantitative investigation into the potential of Neural Machine Translation (NMT) models for automatically applying code changes implemented during pull requests. Their approach leverages NMT to translate code components from their pre-pull request state to their post-pull request state, effectively simulating developer-implemented changes. To facilitate the rename refactoring process and reduce cognitive load on developers, Liu~\etal{}~\cite{liu2023refbert} proposed RefBERT, a two-stage pre-trained framework based on the BERT architecture. RefBERT is designed to automatically suggest meaningful variable names, addressing a challenging aspect of code refactoring.
+
+
+Current automated refactoring tools lack semantic understanding and require manual intervention. To address this, we propose a hybrid approach combining supervised fine-tuning with reinforcement learning, enhancing the accuracy and completeness of extract method refactoring. This is the first study to apply deep reinforcement learning for this task, advancing automated refactoring tools.
+
+
+\subsection{Reinforcement learning in software engineering}
+
+Sequence modeling has emerged as a fundamental paradigm for addressing a wide array of software engineering challenges. In recent years, researchers have explored the application of deep reinforcement learning (DRL) techniques to mitigate exposure bias in supervised fine-tuned models for sequence generation tasks~\cite{ranzato2016sequenceleveltrainingrecurrent, keneshloo2019deepreinforcementlearningsequence}. Notably, Ranzato~\etal{}~\cite{ranzato2016sequenceleveltrainingrecurrent} pioneered the use of established metrics such as BLEU and ROUGE as reward signals in DRL algorithms to optimize network parameters in machine translation, effectively addressing exposure bias. The intersection of DRL and sequence modeling has led to innovative frameworks, such as the one proposed by Chen~\etal{}~\cite{chen2021decisiontransformerreinforcementlearning}, which reconceptualizes reinforcement learning problems as sequence modeling tasks. This approach has paved the way for novel applications in various domains.
+
+In the realm of software engineering, DRL methods have gained traction, particularly in code completion and summarization tasks. Wang~\etal{}\cite{wang2022compilable} leveraged compiler feedback as a reward signal to enhance the quality of language model-generated code. Le\etal{}\cite{le2022coderl} introduced CodeRL, a framework that integrates RL with unit test signals to fine-tune program synthesis models. Shojaee~\etal{}~\cite{shojaee2023execution} conducted comprehensive research, proposing a framework for fine-tuning code language models using DRL and execution signals as rewards. Recent advancements in this field include IRCOCO by Li~\etal{}\cite{li2024ircoco}, which employs immediate rewards to fine-tune language models for code completion tasks. Wang\etal{}\cite{wang2024rlcoder} developed RLCoder, combining DRL with Retrieval-Augmented Generation (RAG) pipelines for repository-level code completion. Furthermore, Nichols\etal{}~\cite{nichols2024performance} demonstrated the potential of DRL in generating efficient parallel code, expanding the application of these techniques to performance optimization.
+
+To our knowledge, \llm{}s have not been specifically trained or aligned for extract method refactoring. Our approach, which combines supervised fine-tuning with PPO alignment, is a first in this domain. This novel methodology produces accurate refactored methods, marking a significant advancement in the field.

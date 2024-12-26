@@ -1,0 +1,64 @@
+%%Identification
+%%The package identifies itself and the LaTeX version needed
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{etc}[2022/10/22 v0.1 A formatting package for frequently occurring words]
+\usepackage[dvipsnames]{xcolor}
+\usepackage{xspace}
+% \usepackage{mathabx}
+\usepackage[most]{tcolorbox}
+\usepackage{amssymb}
+
+\newcommand{\nserc}{{\sc nserc}}
+\newcommand{\mitacs}{{\sc mitacs}}
+
+\newcommand{\ie}{\textit{i.e.,}}
+\newcommand{\eg}{\textit{e.g.,}}
+\newcommand{\etal}{\textit{et al.}}
+\newcommand{\viz}{\textit{viz.}}
+\newcommand{\github}{{\sc GitHub}}
+\newcommand{\api}{{\sc api}}
+\newcommand{\dsl}{{\sc dsl}}
+\newcommand{\designitejava}{{\sc DesigniteJava}}
+\newcommand{\bleu}{\textsc{bleu}}
+\newcommand{\codebleu}{\textsc{c}ode\textsc{bleu}}
+\newcommand{\rouge}{\textsc{rouge}}
+\newcommand{\rl}{\textsc{rl}}
+\newcommand{\task}[1]{\vspace{1mm}\noindent\textbf{#1:}}
+\newcommand{\topic}[1]{\vspace{2mm}\noindent\textbf{#1}:}
+\newcommand{\subtopic}[1]
+{\vspace{1mm}\noindent\textit{#1}:}
+
+
+% Define comments
+
+\newcommand{\nbc}[3]{
+		{\colorbox{#3}{\bfseries\sffamily\scriptsize\textcolor{white}{#1}}}%
+		{\textcolor{#3}{\sf\small$\blacktriangleright$\textit{#2}$\blacktriangleleft$}}}
+\newcommand{\todo}[1]{\nbc{TODO}{#1}{red}\xspace}
+\newcommand{\assignedto}[1]{\nbc{Assigned-to}{#1}{TealBlue}\xspace}
+\newcommand{\doubt}[1]{\nbc{Doubt}{#1}{TealBlue}\xspace}
+
+
+% \newtcbtheorem{Summary}{\bfseries Summary}{enhanced,drop shadow={black!50!white},
+%   coltitle=black,
+%   top=0.3in,
+%   attach boxed title to top left=
+%   {xshift=1.5em,yshift=-\tcboxedtitleheight/2},
+%   boxed title style={size=small,colback=pink}
+% }{summary}
+
+% \newtcolorbox[auto counter]{summary}[1][]{title={\bfseries Summary~\thetcbcounter},enhanced,drop shadow={black!50!white},
+%   coltitle=black,
+%   top=0.3in,
+%   attach boxed title to top left=
+%   {xshift=1.5em,yshift=-\tcboxedtitleheight/2},
+%   boxed title style={size=small,colback=pink},#1}
+
+\definecolor{main}{HTML}{757677}    % setting main color to be used
+\definecolor{sub}{HTML}{DEE0E3}     % setting sub color to be used
+\newtcolorbox{boxH}{
+    colback = sub, 
+    colframe = main, 
+    boxrule = 0pt, 
+    leftrule = 6pt % left rule weight
+}

@@ -1,0 +1,15 @@
+\begin{abstract}
+% \include{abstract}
+Software code refactoring is essential for maintaining and improving code quality, yet it remains challenging for practitioners. While modern tools help identify where code needs refactoring, the current implementation techniques often miss meaningful refactoring opportunities. This accumulates technical debt over time, making software increasingly difficult to maintain and evolve. This thesis presents an automated hybrid approach to identify refactoring candidates and generate refactored code leveraging language models and reinforcement learning.
+
+The first major contribution of the thesis addresses the shortcomings of automatic refactoring candidate identification by training machine learning classifiers with rich code semantics. Unlike traditional approaches that rely on metrics and commit messages, we've developed a self-supervised learning approach to identify negative samples utilizing state-of-the-art GraphCodeBERT embeddings. This approach achieves a $30$\% improvement in F1 score compared to existing metric-based techniques to identify extract method refactoring candidates automatically. 
+
+
+
+Our second contribution introduces a novel approach to automated code refactoring using reinforcement learning, with a specific focus on extract method refactoring. While recent advances in large language models have shown promise for code transformation, traditional supervised learning approaches often fail to produce reliable results. These models typically struggle with maintaining code integrity because they treat code generation similar to text generation, overlooking crucial aspects like compilability and functional correctness. To address this limitation, we develop a method that fine-tunes state-of-the-art pre-trained code language models (e.g., CodeT5) with Proximal Policy Optimization (PPO), creating a code-aware transformation framework. Our approach uses carefully designed reward signals based on successful compilation and adherence to established refactoring guidelines, moving beyond simple text-based metrics. When tested against conventional supervised learning methods, our system demonstrates significant improvements in quality and quantity. 
+
+\newpage
+Together, these advances mark a significant step toward automated, reliable code refactoring that can effectively reduce software practitioner's burden while maintaining high software quality standards. The success of our approach demonstrates how modern machine learning and deep learning techniques when carefully adapted to understand code semantics, can transform traditional software engineering practices.
+
+
+\end{abstract}

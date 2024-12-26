@@ -1,0 +1,36 @@
+% \todo{are there studies that identify refactoring candidate without using machine learning? If yes, we need a subsection for them.}
+
+\subsection{Refactoring candidate identification using traditional techniques}
+
+Software developers can manually decide \textit{what} to refactor according to their intuition and past experiences~\cite{Al2015Identifying}.
+Often, they use automated tools to calculate code quality metrics and code smells to identify refactoring candidates~\cite{Mens2004Survey, Al2015Identifying}. 
+Another method to identify refactoring candidates is to define a set of preconditions or compliance rules. If a code did not follow these rules, it was considered a candidate for refactoring. Studies by Bois \etal{}~\cite{Du2004Refactoring} and Kataoka \etal{}~\cite{Kataoka2001Automated} used such compliance rules.
+
+Another technique considers creating clustering algorithms to identify if code needs refactoring. 
+Czibula \etal{}~\cite{Czibula2008Hierarchical} and Serban \etal{}~\cite{Serban2007Restructuring}, 
+created clusters based on the distance between methods and attributes within and outside of classes to identify numerous refactoring candidates.
+Similarly, Bavota \etal{}~\cite{Bavota2011Identifying} suggest a graph-based approach that uses weighted graphs instead of abstract syntax trees to identify methods that can be extracted. 
+Finally, Tsantalis \etal{}~\cite{Tsantalis2009Identification} used code slices to identify \exm{} candidates.
+
+\subsection{Detecting refactoring with Machine Learning techniques}
+
+Many studies have explored ways to identify refactoring candidates automatically using machine learning.
+Typically, such studies use
+source code metrics or commit messages to train a model. For example, Aniche \etal{}~\cite{Aniche2020Effectiveness} predict $20$ kinds of refactorings at the method, class, or variable level. 
+They use a large number of code, process, and ownership metrics to train six supervised machine learning algorithms. 
+The study reports that \rf{} model performs the best among the compared models.
+Gerling~\cite{Gerling2020Machine} conducted an empirical study as an extension of Aniche \etal{}'s study. 
+They focused on improving the data collection process in Aniche \etal{}'s study to create a high quality large-scale refactoring dataset. 
+
+
+Similarly, Van Der Leij \etal{}~\cite{VanDerLeij2021Data} analyze five machine learning models to predict \exm{} refactoring and compare the results with industry experts.
+They collect $61$ code metrics and analyze \rf{}, \dt{}, \logr{}, Linear \SVM{}, and Gaussian \nb{} algorithms. 
+They found \rf{} as the best performing model. 
+Kumar \etal{}~\cite{Kumar2019Method} perform a study to predict method-level refactoring and analyze $10$ machine learning classifiers. 
+
+
+Sagar \etal{}~\cite{Sagar2021Comparing} considers the problem of refactoring candidate prediction as a multi-class classification problem. 
+Their study uses source code quality metrics and commit messages as features to predict six method-level refactorings. 
+They compare two machine learning models: a text-based model that analyses keywords from commit messages and a source code-based model that analyses $64$ code quality metrics. 
+Kurbatova \etal{}~\cite{Kurbatova2020Recommendation} use code embeddings generated from Code2Vec~\cite{Alon2019Code2vec} to train their machine learning model to predict the \mm{} refactoring. 
+

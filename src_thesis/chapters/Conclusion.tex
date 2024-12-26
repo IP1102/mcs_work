@@ -1,0 +1,59 @@
+\epigraph{The best way to predict the future is to invent it.}{--- \textup{Alan Kay}}
+
+\noindent
+
+This thesis introduces a complete automated pipeline for extract method refactoring, encompassing both the identification of refactoring opportunities and their subsequent implementation. In this chapter, we summarize the results of our research, present the contributions of the thesis, elaborate our vision for future work, and conclude the thesis.
+
+\section{Summary of the Results}
+
+Automating software refactoring completely is an ambitious goal. To make meaningful progress in this direction, we focused our research on answering two fundamental questions. The first question addresses a common challenge developers face daily: identifying which code segments actually need refactoring. To tackle this challenge, we developed an innovative approach for identifying refactoring candidates. Our solution combines a self-supervised autoencoder with code representations from \GCB{}, a pre-trained language model, to capture the essence of source code. We then trained a binary classifier to identify potential extract method refactoring opportunities. The results were promising - our approach outperformed existing machine learning techniques by $30$\% in F1 score, demonstrating its effectiveness in identifying refactoring candidates.
+
+Chapter 4 of this thesis presents our comprehensive solution that incorporates reinforcement learning to automatically perform extract method refactoring. We began by building a substantial dataset of real-world extract method refactoring examples from Java projects. Our evaluation covered various large language models, including both encoder-decoder and decoder-only architectures. An interesting finding emerged during our analysis - while \plbart{} showed strong performance in traditional metrics like \bleu{} and \rouge{}, its qualitative results fell short of expectations. This observation led us to develop an innovative hybrid approach that combines conventional fine-tuning with reinforcement learning alignment. This combination proved particularly effective, showing significant improvements across both quantitative and qualitative measures. The numbers tell a compelling story: our reinforcement learning-aligned approach improved upon traditional supervised fine-tuning by $11.96\%$ in BLEU scores and $16.45\%$ in \codebleu{} scores. Perhaps most importantly, we validated our approach through practical testing. When we ran our solution through a suite of $122$ unit tests, the reinforcement learning-aligned \codetf{} model successfully passed $66$ tests, compared to just $41$ for the baseline model. These results clearly demonstrate our approach's ability to generate not just syntactically correct, but functionally valid refactorings.
+
+\section{Contributions of the Thesis}
+
+The main contributions of this research can be summarized as follows:
+
+\subsection{Research Contributions}
+
+\begin{itemize}
+
+\item We solved a fundamental problem in the field by creating a framework that can reliably tell apart good and bad candidates for \exm{} refactoring. Our experimental results showed significant improvement in accuracy than what was previously possible, making it much more practical for real-world use.
+
+\item We developed a new way to understand code using Autoencoders with \GCB{}. This new approach proved better at capturing the subtle non-heuristics based patterns in code that make refactoring decisions more accurate.
+
+\item By combining supervised learning with reinforcement learning, we created a hybrid system that's particularly good at automatically performing \exm{} refactoring. We observed significant performance improvement not only in terms of quantitative metrics but also validated our approach qualitatively using real world test cases. 
+
+
+\end{itemize}
+
+\subsection{Impact and Implications}
+Our work has some exciting practical implications for software development:
+
+\begin{itemize}
+\item Developers can now save significant time on refactoring tasks both while identifying what to refactor and how to refactor with reduced chance of human error.
+
+\item The high accuracy of our approaches and thorough validation of the generated results indicate that our solutions are ready for real-world use in development environments.
+
+\item Since we've made everything open source, the developer community can build upon our work, adapt it to their needs, and keep improving it.
+
+\end{itemize}
+
+These advancements mean that developers can spend less time on routine code maintenance and more time on creative problem-solving. The tools we've developed aren't just theoretical - they're practical solutions that can make a real difference in day-to-day software development work.
+
+
+\section{Future Work}
+
+\subsection{Refactoring Candidate Identification}
+
+For refactoring candidate identification, our future work will focus on exploring advanced architectural variations of embedding models that can better capture code semantics and structural patterns. As an extension of our current work, we look forward to perform an ablation study to better understand the impact of each of the components and how modifying them can affect the outcome. We plan to investigate hierarchical attention mechanisms and hybrid approaches that combine traditional software metrics with learned representations. This includes developing more sophisticated methods for handling context-dependent refactoring opportunities and exploring multi-modal learning approaches that can leverage both source code and documentation. 
+
+\subsection{Refactored Code Generation}
+
+In the domain of refactoring generation, we plan to enhance our reinforcement learning approach by developing more sophisticated reward functions that better capture code quality improvements and maintenance benefits. An in-depth analysis is required to better understand how the model performs in separating multiple concerns. We also plan to ensure the validity and reproducibility of our results by seeding and running the experiments multiple times. We aim to explore few-shot learning approaches that can adapt to project-specific coding standards and patterns, making the generated refactorings more contextually appropriate. Furthermore, we plan to make these techniques language and refactoring type agnostic.
+
+\subsection{Integrating these solutions to production}
+
+Looking ahead, our primary focus is to optimize the refactoring process for real-time performance, making it responsive enough to work alongside developers as they code. We aim to create a lightweight solution that maintains its high accuracy while integrating seamlessly with existing development environments. Beyond extract method refactoring, we plan to expand our approach to cover other important refactoring techniques. Our goal is to incorporate these capabilities into standard development workflows, making automated refactoring a natural and efficient part of the software development process.
+
+This research lays the groundwork for more sophisticated automated code maintenance tools, opening new possibilities for improving software development practices.

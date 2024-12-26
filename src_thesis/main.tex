@@ -1,0 +1,221 @@
+% thesis.tex -- a sample thesis document in dalthesis.cls package
+% This is a relatively simple thesis example which can be used to
+% start writing your thesis.
+\documentclass[12pt, glossary]{dalthesis}
+
+% These packages are not mandatory but they are generally recommended.
+% The package graphicx is the common package used to include images in
+% the document, usually as a part of a figure:
+\usepackage{graphicx}
+% The package hyperref is needed to easily navigate through the thesis
+% PDF file by making citations clickable, elements of the table of
+% contents, URLs, etc.  Including it just by default like this:
+%\usepackage{hyperref}
+% creates red-bordered boxes around clickable items, which although
+% helpful to notice clickable areas do not look nice.  A way to hide
+% those boxes, but change colour of clickable text is as follows:
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=black,
+  filecolor=magenta,
+  urlcolor=blue, }
+
+\usepackage{graphicx} % Required for inserting images
+\usepackage{supertabular,booktabs}
+\usepackage{url}
+\usepackage{hyperref} 
+% \usepackage{mathabx}
+\usepackage{etc}
+\usepackage{mdframed}
+\usepackage{tikz}
+\usepackage{pgfplots} 
+\usepackage{color,soul}
+\usepackage{listings}
+\usepackage{balance}
+\usepackage{array}
+\usepackage[table]{xcolor}
+\usepackage{caption}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+\usepackage{multirow, multicol}
+\usepackage{wrapfig}
+\usepackage{makecell}
+\usepackage{tabularx}
+\usepackage{subcaption}
+\usepackage{etoolbox}
+\usepackage{epigraph}
+
+\usepackage{minted}
+\usepackage{listings}
+\usepackage{pdfpages}
+
+\usepackage[a-1b]{pdfx}
+
+\lstloadlanguages{Ruby}
+\lstloadlanguages{Java}
+\lstset{%
+basicstyle=\ttfamily\color{black},
+commentstyle = \ttfamily\color{red},
+keywordstyle=\ttfamily\color{blue},
+stringstyle=\color{orange}}
+
+
+
+
+\newcommand{\repositoriesAnalyzed}{x}
+\newcommand{\bn}{\textit{Bayes Network}}
+\newcommand{\dt}{\textit{Decision Tree}}
+\newcommand{\nb}{\textit{Naive Bayes}}
+\newcommand{\svm}{\textit{Support Vector Machine}}
+\newcommand{\lda}{\textit{Linear Discriminant Analysis}}
+\newcommand{\ibk}{\textit{Instance-Based Learner}}
+\newcommand{\lkm}{\textit{Lazy K-means}}
+\newcommand{\mlp}{\textit{Multilayer Perceptron}}
+\newcommand{\lr}{\textit{Linear Regression}}
+\newcommand{\logr}{\textit{Logistic Regression}}
+\newcommand{\poly}{\textit{Polynomial Regression}}
+\newcommand{\rf}{\textit{Random Forest}}
+\newcommand{\lb}{\textit{Logit Boost}}
+\newcommand{\ada}{\textit{AdaBoost}}
+\newcommand{\bg}{\textit{Bagging}}
+\newcommand{\knn}{\textit{K Nearest Neighbors}}
+\newcommand{\ENDE}{\textit{Encoder-Decoder}}
+\newcommand{\latentda}{\textit{Latent Dirichlet Allocation}}
+
+\newcommand{\exm}{\textit{extract method}}
+\newcommand{\Exm}{\textit{Extract method}}
+\newcommand{\mm}{\textit{move method}}
+% \newcommand{\GCB}{\textit{GraphCodeBERT}}
+\newcommand{\GCB}{\textsc{g}raph\textsc{c}ode\textsc{bert}}
+
+\newcommand{\RNN}{{\sc rnn}}
+\newcommand{\CNN}{{\sc cnn}}
+\newcommand{\LSTM}{{\sc lstm}}
+\newcommand{\GRU}{{\sc gru}}
+\newcommand{\SVM}{{\sc svm}}
+\newcommand{\TFIDF}{{\sc tf-idf}}
+\newcommand{\rtnn}{\textit{Reverse neural network}}
+\newcommand{\DNN}{{\sc dnn}}
+\newcommand{\ANN}{{\sc ann}}
+\newcommand{\NMT}{{\sc nmt}}
+\newcommand{\MLP}{{\sc mlp}} %multi-layer perceptron
+\newcommand{\NB}{{\sc nb}} 
+\newcommand{\RF}{{\sc rf}} 
+\newcommand{\LR}{{\sc lr}} 
+\newcommand{\DT}{{\sc dt}} %decision tree
+\newcommand{\NLP}{{\sc nlp}}
+\newcommand{\KNN}{{\sc knn}}
+\newcommand{\BN}{{\sc bn}}
+\newcommand{\GNN}{{\sc gnn}}
+\newcommand{\dl}{{\sc dl}}
+% \newcommand{\llm}{{\sc llm}}
+
+% \newcommand{\exm}{\textit{extract method}}
+% \newcommand{\Exm}{\textit{Extract method}}
+\newcommand{\llm}{large language model}
+\newcommand{\llmsc}{\textsc{llm}}
+\newcommand{\Llm}{Large language model}
+\newcommand{\LLM}{Large Language Model}
+\newcommand{\PPO}{Proximal Policy Optimization}
+\newcommand{\ppo}{\textsc{ppo}}
+\newcommand{\plbart}{\textsc{plbart}}
+\newcommand{\codetf}{\textsc{c}ode-\textsc{t}5}
+\newcommand{\codegpt}{\textsc{c}ode\textsc{gpt}-adapt}
+\newcommand{\codegen}{\textsc{c}ode\textsc{g}en}
+\newcommand{\abst}{\textsc{ast}}
+\newcommand{\sft}{\textsc{sft}}
+
+
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,fill=black!75,color=black!75,text=white,inner sep=1pt] (char) {#1};}}
+
+
+% \epigraphsize{\small}% Default
+\setlength\epigraphwidth{0.5\textwidth}
+\setlength\epigraphrule{0pt}
+
+
+\makeatletter
+\patchcmd{\epigraph}{\@epitext{#1}}{\itshape\@epitext{#1}}{}{}
+\makeatother
+
+
+\begin{document}
+
+\title{Semantic and Execution-Aware Extract Method Refactoring via Self-Supervised Learning and Reinforcement Learning-Based Model Alignment}
+\author{Indranil Palit}
+\supervisor{Dr. Tushar Sharma}
+% The following degrees are included in the current dalthesis.cls
+% class file:
+\mcs  % options are \mcs, \macs, \mec, \mhi, \phd, and \bcshon
+
+% If you degree is not included, you can set several options manually.
+% The following example shows the parameters for the \mcs degree.
+% However, if you need to set these parameters manually, please check
+% the correct names with the Faculty of Graduate Studies, and let the
+% maintainer of this class file know (Vlado Keselj, vlado@cs.dal.ca).
+% MCS Example:
+
+\degree{Master of Computer Science}
+\degreeinitial{M.C.Sc.}
+\faculty{Computer Science}
+\dept{Faculty of Computer Science}
+
+% Month and Year of Defence
+\defencemonth{December}\defenceyear{2024}
+
+\dedicate{To my beloved parents, my younger brother, and my past self, who thought, \textit{``Yeah, this sounds like a great idea!"}}
+
+% This sample thesis contains no tables nor figures, so there is no
+% need to include lists of tables and figures in the front matter:
+% \nolistoftables
+% \nolistoffigures
+
+
+
+\frontmatter
+
+\include{abstract}
+
+
+\begin{acknowledgements}
+% Thanks to all the little people who make me look tall.
+\input{acknowledgements}
+\end{acknowledgements}
+
+\mainmatter
+
+
+\chapter{Introduction}
+\input{chapters/Intro}
+
+\chapter{Background and Related work}
+\input{chapters/Background}
+
+\chapter{Automatic Refactoring Candidate Identification}
+\input{chapters/identification}
+
+\chapter{Comparing Reinforcement Learning and Supervised Learning in generating refactored code accurately}
+\input{chapters/generation}
+
+\chapter{Conclusions \& Future Work}
+\input{chapters/Conclusion}
+
+\bibliographystyle{plain}
+\bibliography{thesis}
+
+\appendix
+
+\chapter{Complementary Material}
+\input{chapters/appendix/replication}
+
+\chapter{Copyright Release}
+\input{chapters/appendix/copyright}
+
+
+
+\end{document}

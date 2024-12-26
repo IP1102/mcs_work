@@ -1,0 +1,60 @@
+Refactoring is a process and a set of techniques to improve source code's structure and quality without impacting the behavior and functionality of the software, thus making the software more maintainable~\cite{Opdyke1992Refactoring, Fowler1999Refactoring}. 
+It is a widely used technique among software developers as it improves code readability, testability, flexibility, and adaptability to introduce changes to meet new requirements~\cite{Mens2004Survey}.
+
+One of the critical questions that a developer answers during software development is whether a source code entity (\eg{} a method or a class) requires refactoring and if yes, what is the most appropriate refactoring in the context. 
+Practitioners decide \textit{what} to refactor according to their intuition and experience. 
+They can also use automated tools to calculate code quality metrics and code smells~\cite{Sharma2018}. 
+However, metrics and smells focus on the \textit{problem} aspect and provide little help to decide whether and what refactoring technique must be applied to remove the smell or improve the metrics.
+
+
+To overcome this challenge, many studies propose techniques to predict refactoring candidates by analyzing source code properties~\cite{Aniche2020Effectiveness, Karakati2023Software, Kurbatova2020Recommendation}.
+However, existing efforts in
+this direction
+% the field of predicting refactoring candidates
+suffers from several deficiencies. 
+Currently, the state-of-the-art research in detecting refactoring candidates, 
+such as Aniche \etal{}~\cite{Aniche2020Effectiveness}, 
+follows a metric-based approach, \ie{} it collects code quality and process metrics, and trains a machine learning model using the collected metrics as features.
+Similarly, Xu \etal{}~\cite{Xu2017}, use variable accesses in addition to code quality metrics.
+These approaches fail to capture the hidden contextual and syntactical characteristics of code that might contribute to better refactoring candidate identification. 
+To overcome the issue,
+researchers have used code embeddings~\cite{Kurbatova2020Recommendation, Karakati2023Software} extracted from Code2Vec~\cite{Alon2019Code2vec}. 
+However, existing studies in this domain do not capture rich contextual and syntactical characteristics of code~\cite{Karmakae2021Modelcoderep};
+such information could significantly improve the performance of the identified refactoring candidates.
+Secondly, existing studies lack an appropriate mechanism to define and identify negative samples for their dataset in this context.
+A code snippet is considered a negative sample if it is not a candidate for the specific refactoring.
+Typically, studies use tools such as RefactoringMiner~\cite{Tsantalis:ICSE:2018:RefactoringMiner, Tsantalis:TSE:2020:RefactoringMiner2.0} to identify positive code samples. 
+% \todo{Reformatted the sentence and added ref} 
+However, to identify negative samples, researchers define unsound rule-based heuristics
+resulting in a low-quality noisy dataset~\cite{trautsch2023really}.
+Finally, most of the previous research in this field fails to consider the real-world ratio of positive and negative samples while evaluating the predictive models. 
+Ignoring this guideline
+results in a model that works well in an experimental study but performs poorly when deployed in a real-world context~\cite{Sharma2021, DiNucci2018}.
+
+% We attempt to address the deficiencies mentioned above in this paper.
+In this thesis, we address the aforementioned deficiencies.
+We present an automated Deep Learning (\dl{})-based technique to identify candidates for \exm{} refactoring. 
+ %It specifically focuses on identifying the method level code refactoring \emph{extract method}. 
+The \exm{} refactoring isolates a code block from a larger method and generates a new method based on the extracted code snippet~\cite{Fowler1999Refactoring}. 
+We kept our focus on \exm{} because it is one of the most commonly used refactoring~\cite{Murphy-Hill2012}. 
+We create our dataset from open-source Java repositories and 
+prepare an effective code representation capturing syntactic and semantic properties of methods by combining \GCB{}~\cite{Guo2020GraphCodeBERT} and Autoencoder~\cite{Liou2014Autoencoder}.
+The representation is then used to identify \exm{} refactoring candidates.
+
+\textit{Contributions of the study:}
+% \begin{itemize}
+%     \item
+    We propose a novel mechanism to properly identify positive and negative samples for \exm{} refactoring.
+    The mechanism helps us create a dataset containing $55,430$ positive and negative samples that serves as a benchmark for automated refactoring candidate identification approaches properly.
+  To study the effectiveness of the method representation generated using \GCB{} in a binary classification task, we propose an Autoencoder-based approach to identify latent features.
+
+
+\textbf{Replication package:} We made our code~\cite{ExtractMethodIdentificationRepo} publicly available with our training data~\cite{indranil_palit_2023_8122619} for easier replication and use.
+
+
+ 
+
+
+ 
+
+
