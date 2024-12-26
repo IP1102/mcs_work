@@ -1,0 +1,3 @@
+[submodule "extract-method-identification"]
+	path = extract-method-identification
+	url = git@github.com:SMART-Dal/extract-method-identification.git
