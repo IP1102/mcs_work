@@ -9,7 +9,7 @@ This repository contains the core contents of my MCS degree. The work is part of
 - The second work is of extract method code generation and the code will be updated soon.
 - The LaTeX code for my thesis is present under `/src_thesis`
 
-### Publications
+## Publications
 
 - Thesis: https://hdl.handle.net/10222/84790
 - Palit, I., Shetty, G., Arif, H., & Sharma, T. (2023, October). Automatic refactoring candidate identification leveraging effective code representation. In 2023 IEEE International Conference on Software Maintenance and Evolution (ICSME) (pp. 369-374). IEEE.
